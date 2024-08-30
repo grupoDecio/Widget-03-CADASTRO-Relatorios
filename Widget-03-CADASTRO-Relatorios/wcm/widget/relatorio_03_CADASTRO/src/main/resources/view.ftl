@@ -49,19 +49,27 @@
 				<input type='text' class='form-control' id='NOMESOLICITANTE_${instanceId}' name='NOMESOLICITANTE_${instanceId}' />
 			</div>
 		</div>
-		<div class='col-md-4'>
+		<div class='col-md-4' hidden>
 			<div class='form-group'>
 				<label for='CATEGORIA_${instanceId}'>Categoria</label>
 				<input type='text' class='form-control' id='CATEGORIA_${instanceId}' name='CATEGORIA_${instanceId}' />
 			</div>
 		</div>
+	</div>
+  <div class="row">
 		<div class='col-md-4'>
 			<div class='form-group'>
 				<label for='ZUNIDADE_${instanceId}'>Unidade</label>
 				<input type='text' class='form-control' id='ZUNIDADE_${instanceId}' name='ZUNIDADE_${instanceId}' />
 			</div>
 		</div>
-	</div>
+		<div class='col-md-4'>
+			<div class='form-group'>
+				<label for='EMPRESA_${instanceId}'>Empresa</label>
+				<input type='text' class='form-control' id='EMPRESA_${instanceId}' name='EMPRESA_${instanceId}' />
+			</div>
+		</div>
+  </div>
 
 	<!-- Botões -->
 	<div class="row">
@@ -111,7 +119,7 @@
 									<b>Categoria:</b> {{ztxt_categoria}}
 								</div>	
 								<div class="col-md-4">
-									<b>Assunto:</b> {{assunto}}
+									<b>Empresa:</b> {{empresa}}
 								</div>	
 							</div>	
 							<div class="row">

@@ -22,10 +22,19 @@ var relatorio_03_CADASTRO = SuperWidget.extend({
     },
 
     exportarProcessos: function (params) {
-        filename = 'Relatorio.xlsx';
-        var ws = XLSX.utils.json_to_sheet(dataExcel.values);
+        dataExcel.Parametros = []
+        getFiltros(this)
+
+        let filename = 'Relatorio.xlsx';
+
+        var ws = XLSX.utils.json_to_sheet(dataExcel.Processos);
+        var ws2 = XLSX.utils.json_to_sheet(dataExcel.Parametros);
+
         var wb = XLSX.utils.book_new();
+
         XLSX.utils.book_append_sheet(wb, ws, "Processos");
+        XLSX.utils.book_append_sheet(wb, ws2, "Parametros da consulta");
+
         XLSX.writeFile(wb, filename);
     },
 
@@ -38,6 +47,7 @@ var relatorio_03_CADASTRO = SuperWidget.extend({
         else return 0
     },
 
+
     converterDataFormato: function (dataDDMMAAAA) {
         var partesData = dataDDMMAAAA.split('/');
         var dataFormatoAAAAMMDD = new Date(partesData[2], partesData[1] - 1, partesData[0]);
@@ -48,21 +58,19 @@ var relatorio_03_CADASTRO = SuperWidget.extend({
     loadTable: function (htmlElement, event) {
         dataExcel = new Array();
         let constraints = [];
-        let limite = String($(`[name='limite_${this.instanceId}']`).val()).trim();
         let NUM_PROCES = String($(`[name='NUM_PROCES_${this.instanceId}']`).val()).trim();
         let status = String($(`[name='status_${this.instanceId}']`).val()).trim();
         let data_sol_INI = String($(`[name='data_sol_INI_${this.instanceId}']`).val()).trim();
         let data_sol_FIM = String($(`[name='data_sol_FIM_${this.instanceId}']`).val()).trim();
-        let NOMESOLICITANTE = String($(`[name='nomeSolicitante_${this.instanceId}']`).val()).trim();
-        let CATEGORIA = String($(`[name='CATEGORIA_${this.instanceId}']`).val()).trim();
+        let NOMESOLICITANTE = String($(`[name='NOMESOLICITANTE_${this.instanceId}']`).val()).trim();
+        let EMPRESA = String($(`[name='EMPRESA_${this.instanceId}']`).val()).trim();
         let ZUNIDADE = String($(`[name='ZUNIDADE_${this.instanceId}']`).val()).trim();
 
-        // if (limite != "") constraints.push(DatasetFactory.createConstraint('sqlLimit', limite, limite, ConstraintType.MUST));
         if (status != "") constraints.push(DatasetFactory.createConstraint('STATUS', status, status, ConstraintType.MUST));
         if (NUM_PROCES != "") constraints.push(DatasetFactory.createConstraint('NUM_PROCES', NUM_PROCES, NUM_PROCES, ConstraintType.MUST));
-        if (NOMESOLICITANTE != "") constraints.push(DatasetFactory.createConstraint('nomeSolicitante', NOMESOLICITANTE, NOMESOLICITANTE, ConstraintType.MUST, true));
-        if (CATEGORIA != "") constraints.push(DatasetFactory.createConstraint('CATEGORIA', CATEGORIA, CATEGORIA, ConstraintType.MUST, true));
+        if (NOMESOLICITANTE != "") constraints.push(DatasetFactory.createConstraint('NOMESOLICITANTE', NOMESOLICITANTE, NOMESOLICITANTE, ConstraintType.MUST, true));
         if (ZUNIDADE != "") constraints.push(DatasetFactory.createConstraint('ZUNIDADE', ZUNIDADE, ZUNIDADE, ConstraintType.MUST, true));
+        if (EMPRESA != "") constraints.push(DatasetFactory.createConstraint('EMPRESA', EMPRESA, EMPRESA, ConstraintType.MUST, true));
         if (data_sol_INI != "" && data_sol_FIM != "") constraints.push(DatasetFactory.createConstraint('START_DATE', converterDataParaFormatoMySQL(data_sol_INI), converterDataParaFormatoMySQL(data_sol_FIM), ConstraintType.MUST));
 
         dadosOriginais = DatasetFactory.getDataset("dsWidgetRel03Cadastro", null, constraints, null);
@@ -100,6 +108,7 @@ function trataRetorno(objeto, colunas) {
         novoObjeto.Avaliado = mudaAvaliacao(item.Avaliado);
         novoObjeto.radioTipoProblema = mudaTipoProblema(item.radioTipoProblema);
         novoObjeto.NUM_SUB_PROCES_LINK = montaLinkSubProcesso(item.NUM_SUB_PROCES);
+        novoObjeto.empresa = preencheEmpresa(item.txt_empresaCpFin, item.txt_empresaNatFin);
 
         ordemDesejada.forEach((campo) => {
             if (novoObjeto.hasOwnProperty(campo)) {
@@ -114,6 +123,65 @@ function trataRetorno(objeto, colunas) {
     console.log(colunas)
     console.log(novoObjetoSaida)
     return novoObjetoSaida;
+}
+
+function getFiltros(that) {
+    const campos = [
+        { id: 'codProcesso', campo: 'Código do Processo' },
+        { id: `data_sol_INI_${that.instanceId}`, campo: 'Data Inicial' },
+        { id: `data_sol_FIM_${that.instanceId}`, campo: 'Data Final' },
+        { id: `status_${that.instanceId}`, campo: 'Status' },
+        { id: `NOMESOLICITANTE_${that.instanceId}`, campo: 'Requisitante' },
+        { id: `ZATENDENTE_${that.instanceId}`, campo: 'Atendente' },
+        { id: `CATEGORIA_${that.instanceId}`, campo: 'Categoria' },
+        { id: `ZFONTE_${that.instanceId}`, campo: 'Empresa' },
+        { id: `ZUNIDADE_${that.instanceId}`, campo: 'Unidade' }
+    ]
+
+    campos.forEach(e => {
+        if(e.id != 'codProcesso' && e.id != `status_${that.instanceId}`){
+            if($(`#${e.id}`).val().trim() != ''){
+                dataExcel.Parametros.push(
+                    {
+                        'Campo' : `${e.campo}`,
+                        'Valor' : $(`#${e.id}`).val()
+                    }
+                )
+            }
+        }
+        else if(e.id == `status_${that.instanceId}`){
+            let status;
+            switch($(`#${e.id}`).val()){
+                case '0':
+                    status = 'Aberta'
+                    break;
+                case '2':
+                    status = 'Finalizada'
+                    break;
+                case '1':
+                    status = 'Cancelada'
+                    break;
+                default:
+                    status = 'Todos'
+                    break;
+            }
+
+            dataExcel.Parametros.push(
+                {
+                    'Campo' : `${e.campo}`,
+                    'Valor' : status
+                }
+            )
+        }
+        else{
+            dataExcel.Parametros.push(
+                {
+                    'Campo' : `${e.campo}`,
+                    'Valor' : '03-CADASTRO - 03-CADASTRO'
+                }
+            )
+        }
+    })
 }
 
 function converterSegundos(segundos) {
@@ -157,6 +225,25 @@ function mudaCorStatus(params) {
         default: return params;
     }
 }
+
+function preencheEmpresa(empresa1, empresa2) {
+    empresa1 = String(empresa1).trim();
+    empresa2 = String(empresa2).trim();
+
+    if (empresa1 && empresa2) {
+      console.log(empresa1 + " " + empresa2);
+      return empresa1 + ' / ' + empresa2;
+    } else if (empresa1) {
+      console.log(empresa1);
+      return empresa1;
+    } else if (empresa2) {
+      console.log(empresa2);
+      return empresa2;
+    } else {
+      return '';
+    }
+}
+
 
 function mudaAvaliacao(params) {
     switch (params) {
