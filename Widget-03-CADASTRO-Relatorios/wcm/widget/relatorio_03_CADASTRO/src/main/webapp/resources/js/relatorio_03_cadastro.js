@@ -1,10 +1,13 @@
-let ccComplete;
+var ccComplete;
 let oNewWindow;
-let dataExcel = new Array();
+let dataExcel = {
+    Processos : [],
+    Parametros : []
+}
 let mydata = new Array();
 let agrupadoPorNumProces = new Array();
 document['instanceId'] = 0;
-var relatorio_03_CADASTRO = SuperWidget.extend({
+var relatorio_03_cadastro = SuperWidget.extend({
     //método iniciado quando a widget é carregada
     init: function () {
         document['instanceId'] = this.instanceId;
@@ -56,7 +59,6 @@ var relatorio_03_CADASTRO = SuperWidget.extend({
     },
 
     loadTable: function (htmlElement, event) {
-        dataExcel = new Array();
         let constraints = [];
         let NUM_PROCES = String($(`[name='NUM_PROCES_${this.instanceId}']`).val()).trim();
         let status = String($(`[name='status_${this.instanceId}']`).val()).trim();
@@ -77,11 +79,11 @@ var relatorio_03_CADASTRO = SuperWidget.extend({
 
         if (dadosOriginais.values.length > 0) {
             agrupadoPorNumProces = {};
-            dataExcel = trataRetorno(dadosOriginais, dadosOriginais.columns);
-            console.log(dataExcel)
+            agrupadoPorNumProces = agruparObjeto(dadosOriginais, NUM_PROCES);
+            console.log(agrupadoPorNumProces);
 
             let tpl = $('.template_datatable').html()
-            let html = Mustache.render(tpl, dataExcel);
+            let html = Mustache.render(tpl, agrupadoPorNumProces);
             $(`#mypanel_${this.instanceId}`).html(html);
         } else {
             console.log("Não foi encontrado nenhum item para esses filtros");
@@ -90,40 +92,6 @@ var relatorio_03_CADASTRO = SuperWidget.extend({
 
     }
 });
-
-function trataRetorno(objeto, colunas) {
-    let novoObjeto = {};
-    let novoObjetoSaida = { values: [] };
-
-    let ordemDesejada = colunas;
-    let novoObjetoOrdenado = {};
-
-    colunas.push("CORSTATUS")
-    colunas.push("Avaliado")
-    colunas.push("NUM_SUB_PROCES_LINK")
-
-    objeto.values.forEach(item => {
-        novoObjeto = item;
-        novoObjeto.CORSTATUS = mudaCorStatus(item.STATUS);
-        novoObjeto.Avaliado = mudaAvaliacao(item.Avaliado);
-        novoObjeto.radioTipoProblema = mudaTipoProblema(item.radioTipoProblema);
-        novoObjeto.NUM_SUB_PROCES_LINK = montaLinkSubProcesso(item.NUM_SUB_PROCES);
-        novoObjeto.empresa = preencheEmpresa(item.txt_empresaCpFin, item.txt_empresaNatFin);
-
-        ordemDesejada.forEach((campo) => {
-            if (novoObjeto.hasOwnProperty(campo)) {
-                novoObjetoOrdenado[campo] = novoObjeto[campo];
-            }
-        });
-
-        novoObjetoSaida.values.push(novoObjetoOrdenado);
-        novoObjeto = {};
-        novoObjetoOrdenado = {};
-    });
-    console.log(colunas)
-    console.log(novoObjetoSaida)
-    return novoObjetoSaida;
-}
 
 function getFiltros(that) {
     const campos = [
@@ -183,6 +151,105 @@ function getFiltros(that) {
         }
     })
 }
+
+function agruparObjeto(objeto, NUM_PROCES) {
+    let novoObjeto = {};
+    let novoObjetoSaida = { values: [] };
+
+    let solicitacoes = []
+    let detalhesSolicitacao = [];
+
+    objeto.values.forEach(item => {
+        const numProces = item.NUM_PROCES;
+        const numSeqEstado = item.NUM_SEQ_ESTADO;
+
+        const nomEstadoKey = `NOM_ESTADO_${numSeqEstado}`;
+        const prazoKey = `PRAZO_${numSeqEstado}`;
+        const fullName = `FULL_NAME_${numSeqEstado}`;
+        const tempoAtividade = `TEMPO_ATIVIDADE_${numSeqEstado}`;
+        const conclusao = `MOV_END_TIME_${numSeqEstado}`;
+        const tempoGasto = `TEMPO_GASTO_${numSeqEstado}`;
+
+        /** Colunas agrupadas */
+        novoObjeto[nomEstadoKey] = item.NOM_ESTADO;
+        novoObjeto[prazoKey] = item.PRAZO;
+        novoObjeto[fullName] = item.FULL_NAME;
+        novoObjeto[tempoAtividade] = item.TEMPO_ATIVIDADE;
+        novoObjeto[conclusao] = item.MOV_END_TIME;
+        novoObjeto[tempoGasto] = converterSegundos(item.TEMPO_ATIVIDADE);
+        novoObjeto.tempoGastoProcesso = converterSegundos(item.TOTAL_EXECUCAO);
+        novoObjeto.CORSTATUS = mudaCorStatus(item.STATUS);
+        novoObjeto.NOM_ESTADO_ATUAL = item.NOM_ESTADO;
+
+        /** Coluna padrão */
+        novoObjeto.NUM_PROCES = numProces;
+        novoObjeto.DES_STATUS = item.DES_STATUS;
+        novoObjeto.zUnidade = item.zUnidade;
+        novoObjeto.zFonte = item.zFonte;
+        novoObjeto.nomeSolicitante = item.nomeSolicitante;
+        novoObjeto.categoria = item.categoria;
+        novoObjeto.assunto = item.assunto;
+        novoObjeto.START_DATE = item.START_DATE;
+        novoObjeto.END_DATE = item.END_DATE;
+        novoObjeto.TOTAL_EXECUCAO = item.TOTAL_EXECUCAO;
+        novoObjeto.zSLA = item.zSLA;
+        novoObjeto.ATIVIDADE_ATUAL = item.ATIVIDADE_ATUAL;
+        novoObjeto.CD_MATRICULA = item.CD_MATRICULA;
+        novoObjeto.FULL_NAME = item.FULL_NAME;
+        novoObjeto.MOV_INI_TIME = item.MOV_INI_TIME;
+        novoObjeto.MOV_END_TIME = item.MOV_END_TIME;
+        novoObjeto.DEADLINE = item.DEADLINE;
+        novoObjeto.TEMPO_ATIVIDADE = item.TEMPO_ATIVIDADE;
+        novoObjeto.NUM_SEQ_ESTADO = item.NUM_SEQ_ESTADO;
+        novoObjeto.NR_DOCUMENTO_CARD = item.NR_DOCUMENTO_CARD;
+        novoObjeto.STATUS = item.STATUS;
+        novoObjeto.COD_MATR_REQUISIT = item.COD_MATR_REQUISIT;
+        novoObjeto.COD_DEF_PROCES = item.COD_DEF_PROCES;
+        novoObjeto.NR_DOCUMENTO = item.NR_DOCUMENTO;
+        novoObjeto.zAtendente = item.zAtendente;
+        novoObjeto.Avaliado = mudaAvaliacao(item.Avaliado);
+
+        detalhesSolicitacao.push(
+            {
+                Solicitação : novoObjeto.NUM_PROCES,
+                [`${novoObjeto.NOM_ESTADO_ATUAL} - Responsável`] : novoObjeto[fullName],
+                [`${novoObjeto.NOM_ESTADO_ATUAL} - Conclusão`] : novoObjeto[conclusao],
+                [`${novoObjeto.NOM_ESTADO_ATUAL} - SLA`] : item.PRAZO,
+                [`${novoObjeto.NOM_ESTADO_ATUAL} - Tempo`] : novoObjeto[`TEMPO_GASTO_${numSeqEstado}`]
+            }
+        )
+
+        if (item.ATIVIDADE_ATUAL == "true") {
+            novoObjetoSaida.values.push(novoObjeto);
+            solicitacoes.push(
+                {
+                    Solicitação : novoObjeto.NUM_PROCES,
+                    Status : novoObjeto.DES_STATUS,
+                    Unidade : novoObjeto.zUnidade,
+                    Empresa : novoObjeto.zFonte,
+                    Requisitante : novoObjeto.nomeSolicitante,
+                    Localizacao : novoObjeto.NOM_ESTADO_ATUAL,
+                    Categoria : novoObjeto.categoria,
+                    Assunto : novoObjeto.assunto,
+                    Inicio : novoObjeto.START_DATE,
+                    Fim : novoObjeto.END_DATE, 
+                    Tempo_em_execução : novoObjeto.TOTAL_EXECUCAO,
+                    SLA : novoObjeto.zSLA
+                }
+            )
+            novoObjeto = {};
+            ultimoObj = item.NUM_PROCES;
+        }
+    });
+
+    dataExcel.Processos = solicitacoes.map(proc => {
+        const detalhesDoProcesso = detalhesSolicitacao.filter(det => det.Solicitação === proc.Solicitação);
+        return { ...proc, ...Object.assign({}, ...detalhesDoProcesso) };
+    })
+
+    return novoObjetoSaida;
+}
+
 
 function converterSegundos(segundos) {
     const umDiaEmSegundos = 86400;
@@ -256,28 +323,6 @@ function mudaAvaliacao(params) {
     }
 }
 
-function mudaTipoProblema(params) {
-    switch (params) {
-        case "Pedido divergente": return "Pedido divergente";
-        case "V&iacute;nculo": return "Cadastro x vínculo ou Fator de conversão";
-        case "Vinculo": return "Cadastro x vínculo ou Fator de conversão";
-        case "cadastro_item": return "Cadastro de item novo";
-        case "cadastro_Fornecedor": return "Cadastro de novo fornecedor";
-        case "nf_semPedido": return "NF sem pedido";
-        default: return params;
-    }
-}
-
-function montaLinkSubProcesso(listaSubProcessos) {
-    let links = "";
-    String(listaSubProcessos).split(",").forEach((item) => {
-        let soNumero = String(item).replace(/[^\d.]+/g, "");
-        links += `[<a href="/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=${String(soNumero).trim()}">${String(item).trim()}</a>] `
-    });
-
-    if (links != "") return links;
-    else return false;
-}
 
 function converterDataParaFormatoMySQL(data) {
     var partesData = data.split('/');

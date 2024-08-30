@@ -1,7 +1,7 @@
 <script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>
 <script src="/portal/resources/js/mustache/mustache-min.js"></script>
 
-<div id="relatorio_03_CADASTRO_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide" data-params="relatorio_03_CADASTRO.instance()">
+<div id="relatorio_03_cadastro_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide" data-params="relatorio_03_cadastro.instance()">
 	<!-- Filtros -->
 	<div class="row">
 		<div class='col-md-4'>
@@ -137,23 +137,87 @@
 								<div class="col-md-4">
 									<b>Início:</b> {{START_DATE}}
 								</div>	
-								{{#END_DATE}}  
 								<div class="col-md-4">
 									<b>Fim:</b> {{END_DATE}}
 								</div>	
-								{{/END_DATE}}  
 								<div class="col-md-4">
 									<b>Base:</b> {{rb_base}}
 								</div>	
 							</div>
 
-							{{#NUM_SUB_PROCES}}  
+							<!-- Individual atividades -->
 							<div class="row">
 								<div class="col-md-12">
-									<b>Subprocessos:</b> {{{ NUM_SUB_PROCES_LINK }}}
+									<h4>Execução das atividades</h4>
+								</div>
+							</div>
+							{{#NOM_ESTADO_10}}  
+							<div class="row">  
+								<div class="col-md-2">
+									<b>Atividade:</b> {{NOM_ESTADO_10}}
+								</div>	
+								<div class="col-md-3">
+									<b>Responsável:</b> {{FULL_NAME_10}}
+								</div>	
+								<div class="col-md-2">
+									<b>Conclusão:</b> {{MOV_END_TIME_10}}
+								</div>	
+								<div class="col-md-2">
+									<b>Tempo:</b> {{TEMPO_GASTO_10}}
 								</div>	
 							</div>  
-							{{/NUM_SUB_PROCES}}  
+							{{/NOM_ESTADO_10}}
+
+							{{#NOM_ESTADO_29}}  
+							<div class="row">  
+								<div class="col-md-2">
+									<b>Atividade:</b> {{NOM_ESTADO_29}}
+								</div>	
+								<div class="col-md-3">
+									<b>Responsável:</b> {{FULL_NAME_29}}
+								</div>	
+								<div class="col-md-2">
+									<b>Conclusão:</b> {{MOV_END_TIME_29}}
+								</div>	
+								<div class="col-md-2">
+									<b>Tempo:</b> {{TEMPO_GASTO_29}}
+								</div>	
+							</div>  
+							{{/NOM_ESTADO_29}}
+
+							{{#NOM_ESTADO_45}}  
+							<div class="row">  
+								<div class="col-md-2">
+									<b>Atividade:</b> {{NOM_ESTADO_45}}
+								</div>	
+								<div class="col-md-3">
+									<b>Responsável:</b> {{FULL_NAME_45}}
+								</div>	
+								<div class="col-md-2">
+									<b>Conclusão:</b> {{MOV_END_TIME_45}}
+								</div>	
+								<div class="col-md-2">
+									<b>Tempo:</b> {{TEMPO_GASTO_45}}
+								</div>	
+							</div>  
+							{{/NOM_ESTADO_45}}
+
+							{{#NOM_ESTADO_39}}  
+							<div class="row">  
+								<div class="col-md-2">
+									<b>Atividade:</b> {{NOM_ESTADO_39}}
+								</div>	
+								<div class="col-md-3">
+									<b>Responsável:</b> {{FULL_NAME_39}}
+								</div>	
+								<div class="col-md-2">
+									<b>Conclusão:</b> {{MOV_END_TIME_39}}
+								</div>	
+								<div class="col-md-2">
+									<b>Tempo:</b> {{TEMPO_GASTO_39}}
+								</div>	
+							</div>  
+							{{/NOM_ESTADO_39}}
 						</div>
 					</div>
 				</div>
