@@ -105,23 +105,34 @@
 									<b>Unidade:</b> {{zUnidade}}
 								</div>	
 								<div class="col-md-4">
-									<b>Requisitante:</b> {{nomeSolicitante}}
-								</div>	
-								<div class="col-md-4">
-									<b>Localização:</b> {{NOM_ESTADO}}
-								</div>	
-							</div>	
-							<div class="row">
-								<div class="col-md-4">
-									<b>Tipo de problema:</b> {{radioTipoProblema}}
-								</div>	
-								<div class="col-md-4">
-									<b>Categoria:</b> {{ztxt_categoria}}
+									<b>Segmento:</b> {{zSegmento}}
 								</div>	
 								<div class="col-md-4">
 									<b>Empresa:</b> {{empresa}}
 								</div>	
 							</div>	
+							<div class="row">
+								<div class="col-md-4">
+									<b>Requisitante:</b> {{nomeSolicitante}}
+								</div>	
+								<div class="col-md-4">
+									<b>Atendente:</b> {{zAtendente}}
+								</div>	
+								<div class="col-md-4">
+									<b>Localização:</b> {{NOM_ESTADO}}
+								</div>	
+							</div>	
+              <div class="row">
+								<div class="col-md-4">
+									<b>Destinação:</b> {{sl_destinacao_vinc}}
+								</div>	
+								<div class="col-md-4">
+									<b>Categoria:</b> {{ztxt_categoria}}
+								</div>	
+								<div class="col-md-4">
+									<b>Tipo da Solicitação:</b> {{ztxt_subCategoria}}
+								</div>	
+              </div>
 							<div class="row">
 								<div class="col-md-4">
 									<b>Início:</b> {{START_DATE}}
@@ -131,6 +142,9 @@
 									<b>Fim:</b> {{END_DATE}}
 								</div>	
 								{{/END_DATE}}  
+								<div class="col-md-4">
+									<b>Base:</b> {{rb_base}}
+								</div>	
 							</div>
 
 							{{#NUM_SUB_PROCES}}  
