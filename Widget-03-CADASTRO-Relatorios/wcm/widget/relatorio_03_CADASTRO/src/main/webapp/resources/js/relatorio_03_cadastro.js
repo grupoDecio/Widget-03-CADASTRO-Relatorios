@@ -102,7 +102,7 @@ function getFiltros(that) {
         { id: `NOMESOLICITANTE_${that.instanceId}`, campo: 'Requisitante' },
         { id: `ZATENDENTE_${that.instanceId}`, campo: 'Atendente' },
         { id: `CATEGORIA_${that.instanceId}`, campo: 'Categoria' },
-        { id: `ZFONTE_${that.instanceId}`, campo: 'Empresa' },
+        { id: `EMPRESA_${that.instanceId}`, campo: 'Empresa' },
         { id: `ZUNIDADE_${that.instanceId}`, campo: 'Unidade' }
     ]
 
@@ -153,6 +153,7 @@ function getFiltros(that) {
 }
 
 function agruparObjeto(objeto, NUM_PROCES) {
+    console.log(objeto);
     let novoObjeto = {};
     let novoObjetoSaida = { values: [] };
 
@@ -184,15 +185,18 @@ function agruparObjeto(objeto, NUM_PROCES) {
         /** Coluna padrão */
         novoObjeto.NUM_PROCES = numProces;
         novoObjeto.DES_STATUS = item.DES_STATUS;
+        novoObjeto.zAtendente = item.zAtendente;
         novoObjeto.zUnidade = item.zUnidade;
-        novoObjeto.zFonte = item.zFonte;
+        novoObjeto.zSegmento = item.zSegmento;
+        novoObjeto.empresa = item.txt_empresaNatFin + item.txt_empresaCpFin;
         novoObjeto.nomeSolicitante = item.nomeSolicitante;
-        novoObjeto.categoria = item.categoria;
-        novoObjeto.assunto = item.assunto;
+        novoObjeto.ztxt_categoria = item.ztxt_categoria;
+        novoObjeto.ztxt_subCategoria = item.ztxt_subCategoria;
+        novoObjeto.rb_base = item.rb_base;
+        novoObjeto.sl_destinacao_vinc = item.sl_destinacao_vinc;
         novoObjeto.START_DATE = item.START_DATE;
         novoObjeto.END_DATE = item.END_DATE;
         novoObjeto.TOTAL_EXECUCAO = item.TOTAL_EXECUCAO;
-        novoObjeto.zSLA = item.zSLA;
         novoObjeto.ATIVIDADE_ATUAL = item.ATIVIDADE_ATUAL;
         novoObjeto.CD_MATRICULA = item.CD_MATRICULA;
         novoObjeto.FULL_NAME = item.FULL_NAME;
@@ -206,7 +210,6 @@ function agruparObjeto(objeto, NUM_PROCES) {
         novoObjeto.COD_MATR_REQUISIT = item.COD_MATR_REQUISIT;
         novoObjeto.COD_DEF_PROCES = item.COD_DEF_PROCES;
         novoObjeto.NR_DOCUMENTO = item.NR_DOCUMENTO;
-        novoObjeto.zAtendente = item.zAtendente;
         novoObjeto.Avaliado = mudaAvaliacao(item.Avaliado);
 
         detalhesSolicitacao.push(
@@ -214,7 +217,6 @@ function agruparObjeto(objeto, NUM_PROCES) {
                 Solicitação : novoObjeto.NUM_PROCES,
                 [`${novoObjeto.NOM_ESTADO_ATUAL} - Responsável`] : novoObjeto[fullName],
                 [`${novoObjeto.NOM_ESTADO_ATUAL} - Conclusão`] : novoObjeto[conclusao],
-                [`${novoObjeto.NOM_ESTADO_ATUAL} - SLA`] : item.PRAZO,
                 [`${novoObjeto.NOM_ESTADO_ATUAL} - Tempo`] : novoObjeto[`TEMPO_GASTO_${numSeqEstado}`]
             }
         )
@@ -226,15 +228,13 @@ function agruparObjeto(objeto, NUM_PROCES) {
                     Solicitação : novoObjeto.NUM_PROCES,
                     Status : novoObjeto.DES_STATUS,
                     Unidade : novoObjeto.zUnidade,
-                    Empresa : novoObjeto.zFonte,
+                    Empresa : novoObjeto.empresa,
                     Requisitante : novoObjeto.nomeSolicitante,
                     Localizacao : novoObjeto.NOM_ESTADO_ATUAL,
                     Categoria : novoObjeto.categoria,
-                    Assunto : novoObjeto.assunto,
                     Inicio : novoObjeto.START_DATE,
                     Fim : novoObjeto.END_DATE, 
                     Tempo_em_execução : novoObjeto.TOTAL_EXECUCAO,
-                    SLA : novoObjeto.zSLA
                 }
             )
             novoObjeto = {};

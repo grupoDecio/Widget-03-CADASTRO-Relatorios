@@ -119,7 +119,7 @@
 									<b>Atendente:</b> {{zAtendente}}
 								</div>	
 								<div class="col-md-4">
-									<b>Localização:</b> {{NOM_ESTADO}}
+									<b>Localização:</b> {{NOM_ESTADO_ATUAL}}
 								</div>	
 							</div>	
               <div class="row">
