@@ -107,45 +107,55 @@ function getFiltros(that) {
     ]
 
     campos.forEach(e => {
-        if(e.id != 'codProcesso' && e.id != `status_${that.instanceId}`){
-            if($(`#${e.id}`).val().trim() != ''){
+        const element = $(`#${e.id}`);
+        if (element.length === 0) {
+            console.warn(`Elemento com ID '${e.id}' não encontrado.`);
+            return; // Ou continue para o próximo elemento
+        }
+
+        const value = element.val(); // Obtenha o valor do elemento
+        if (value === undefined) {
+            console.warn(`Valor do elemento '${e.id}' é undefined.`);
+            return; // Ou continue para o próximo elemento
+        }
+
+        if (e.id !== 'codProcesso' && e.id !== `status_${that.instanceId}`) {
+            if (value.trim() !== '') {
                 dataExcel.Parametros.push(
                     {
-                        'Campo' : `${e.campo}`,
-                        'Valor' : $(`#${e.id}`).val()
+                        'Campo': e.campo,
+                        'Valor': value
                     }
                 )
             }
-        }
-        else if(e.id == `status_${that.instanceId}`){
+        } else if (e.id === `status_${that.instanceId}`) {
             let status;
-            switch($(`#${e.id}`).val()){
+            switch (value) {
                 case '0':
-                    status = 'Aberta'
+                    status = 'Aberta';
                     break;
                 case '2':
-                    status = 'Finalizada'
+                    status = 'Finalizada';
                     break;
                 case '1':
-                    status = 'Cancelada'
+                    status = 'Cancelada';
                     break;
                 default:
-                    status = 'Todos'
+                    status = 'Todos';
                     break;
             }
 
             dataExcel.Parametros.push(
                 {
-                    'Campo' : `${e.campo}`,
-                    'Valor' : status
+                    'Campo': e.campo,
+                    'Valor': status
                 }
             )
-        }
-        else{
+        } else {
             dataExcel.Parametros.push(
                 {
-                    'Campo' : `${e.campo}`,
-                    'Valor' : '03-CADASTRO - 03-CADASTRO'
+                    'Campo': e.campo,
+                    'Valor': '03-CADASTRO - 03-CADASTRO'
                 }
             )
         }
@@ -231,7 +241,11 @@ function agruparObjeto(objeto, NUM_PROCES) {
                     Empresa : novoObjeto.empresa,
                     Requisitante : novoObjeto.nomeSolicitante,
                     Localizacao : novoObjeto.NOM_ESTADO_ATUAL,
-                    Categoria : novoObjeto.categoria,
+                    Categoria : novoObjeto.ztxt_categoria,
+                    Tipo_da_solicitacao : novoObjeto.ztxt_subCategoria,
+                    Atendente : novoObjeto.zAtendente,
+                    Base : novoObjeto.rb_base,
+                    Destinacao : novoObjeto.sl_destinacao_vinc,
                     Inicio : novoObjeto.START_DATE,
                     Fim : novoObjeto.END_DATE, 
                     Tempo_em_execução : novoObjeto.TOTAL_EXECUCAO,

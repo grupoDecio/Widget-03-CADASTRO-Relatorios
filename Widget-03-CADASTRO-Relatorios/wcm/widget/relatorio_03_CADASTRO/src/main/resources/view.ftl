@@ -219,6 +219,7 @@
 							</div>  
 							{{/NOM_ESTADO_39}}
 						</div>
+						<a class="card-link" style="text-decoration: underline;" href="/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID={{NUM_PROCES}}" target="_black">Visualizar detalhes solicitação</a>
 					</div>
 				</div>
 			</div> 
