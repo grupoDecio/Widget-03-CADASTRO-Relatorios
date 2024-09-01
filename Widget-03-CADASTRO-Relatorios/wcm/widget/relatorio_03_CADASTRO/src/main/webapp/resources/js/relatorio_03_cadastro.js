@@ -47,29 +47,11 @@ var relatorio_03_cadastro = SuperWidget.extend({
   },
 
   processInstanceId: function (documentId) {
-    let datasetProcessAttachment = DatasetFactory.getDataset(
-      "processAttachment",
+    let datasetProcessAttachment = DatasetFactory.getDataset( "processAttachment",
       new Array("processAttachmentPK.processInstanceId"),
-      new Array(
-        DatasetFactory.createConstraint(
-          "sqlLimit",
-          "1",
-          "1",
-          ConstraintType.MUST,
-        ),
-        DatasetFactory.createConstraint(
-          "documentId",
-          documentId,
-          documentId,
-          ConstraintType.MUST,
-        ),
-      ),
-      null,
-    );
+      new Array( DatasetFactory.createConstraint( "sqlLimit", "1", "1", ConstraintType.MUST), DatasetFactory.createConstraint( "documentId", documentId, documentId, ConstraintType.MUST)), null);
     if (datasetProcessAttachment.values.length > 0)
-      return datasetProcessAttachment.values[0][
-        "processAttachmentPK.processInstanceId"
-      ];
+      return datasetProcessAttachment.values[0][ "processAttachmentPK.processInstanceId" ];
     else return 0;
   },
 
@@ -91,80 +73,27 @@ var relatorio_03_cadastro = SuperWidget.extend({
     myLoading1.show();
     let constraints = [];
     let limite = String($(`[name='limite_${this.instanceId}']`).val()).trim();
-    let NUM_PROCES = String(
-      $(`[name='NUM_PROCES_${this.instanceId}']`).val(),
-    ).trim();
+    let NUM_PROCES = String( $(`[name='NUM_PROCES_${this.instanceId}']`).val()).trim();
     let status = String($(`[name='status_${this.instanceId}']`).val()).trim();
-    let data_sol_INI = String(
-      $(`[name='data_sol_INI_${this.instanceId}']`).val(),
-    ).trim();
-    let data_sol_FIM = String(
-      $(`[name='data_sol_FIM_${this.instanceId}']`).val(),
-    ).trim();
-    let NOMESOLICITANTE = String(
-      $(`[name='NOMESOLICITANTE_${this.instanceId}']`).val(),
-    ).trim();
+    let data_sol_INI = String( $(`[name='data_sol_INI_${this.instanceId}']`).val()).trim();
+    let data_sol_FIM = String( $(`[name='data_sol_FIM_${this.instanceId}']`).val()).trim();
+    let NOMESOLICITANTE = String( $(`[name='NOMESOLICITANTE_${this.instanceId}']`).val()).trim();
     let EMPRESA = String($(`[name='EMPRESA_${this.instanceId}']`).val()).trim();
-    let ZUNIDADE = String(
-      $(`[name='ZUNIDADE_${this.instanceId}']`).val(),
-    ).trim();
+    let ZUNIDADE = String( $(`[name='ZUNIDADE_${this.instanceId}']`).val()).trim();
 
     // if (limite != "") constraints.push(DatasetFactory.createConstraint('sqlLimit', limite, limite, ConstraintType.MUST));
     if (status != "")
-      constraints.push(
-        DatasetFactory.createConstraint(
-          "STATUS",
-          status,
-          status,
-          ConstraintType.MUST,
-        ),
-      );
+      constraints.push( DatasetFactory.createConstraint("STATUS", status, status, ConstraintType.MUST));
     if (data_sol_INI != "" && data_sol_FIM != "")
-      constraints.push(
-        DatasetFactory.createConstraint(
-          "START_DATE",
-          converterDataParaFormatoMySQL(data_sol_INI),
-          converterDataParaFormatoMySQL(data_sol_FIM, true),
-          ConstraintType.MUST,
-        ),
-      );
+      constraints.push( DatasetFactory.createConstraint("START_DATE", converterDataParaFormatoMySQL(data_sol_INI), converterDataParaFormatoMySQL(data_sol_FIM, true), ConstraintType.MUST));
     if (NOMESOLICITANTE != "")
-      constraints.push(
-        DatasetFactory.createConstraint(
-          "NOMESOLICITANTE",
-          NOMESOLICITANTE,
-          NOMESOLICITANTE,
-          ConstraintType.MUST,
-          true,
-        ),
-      );
+      constraints.push( DatasetFactory.createConstraint("NOMESOLICITANTE", NOMESOLICITANTE, NOMESOLICITANTE, ConstraintType.MUST, true));
     if (EMPRESA != "")
-      constraints.push(
-        DatasetFactory.createConstraint(
-          "EMPRESA",
-          EMPRESA,
-          EMPRESA,
-          ConstraintType.MUST,
-          true,
-        ),
-      );
+      constraints.push( DatasetFactory.createConstraint("EMPRESA", EMPRESA, EMPRESA, ConstraintType.MUST, true));
     if (ZUNIDADE != "")
-      constraints.push(
-        DatasetFactory.createConstraint(
-          "ZUNIDADE",
-          ZUNIDADE,
-          ZUNIDADE,
-          ConstraintType.MUST,
-          true,
-        ),
-      );
+      constraints.push(DatasetFactory.createConstraint("ZUNIDADE", ZUNIDADE, ZUNIDADE, ConstraintType.MUST, true));
 
-    dadosOriginais = DatasetFactory.getDataset(
-      "dsWidgetRel03Cadastro",
-      null,
-      constraints,
-      null,
-    );
+    dadosOriginais = DatasetFactory.getDataset("dsWidgetRel03Cadastro", null, constraints, null);
     if (dadosOriginais.values.length > 0) {
       agrupadoPorNumProces = {};
       agrupadoPorNumProces = agruparObjeto(dadosOriginais, NUM_PROCES);
@@ -221,12 +150,12 @@ function getFiltros(that) {
 
       dataExcel.Parametros.push({
         Campo: `${e.campo}`,
-        Valor: status,
+        Valor: status
       });
     } else {
       dataExcel.Parametros.push({
         Campo: `${e.campo}`,
-        Valor: "03-CADASTRO - 03-CADASTRO",
+        Valor: "03-CADASTRO - 03-CADASTRO"
       });
     }
   });
@@ -242,7 +171,6 @@ function agruparObjeto(objeto, NUM_PROCES) {
   for (let x = 0; x < objeto.values.length; x++) {
     const numProces = objeto.values[x].NUM_PROCES;
     const numSeqEstado = parseInt(objeto.values[x].NUM_SEQ_ESTADO, 10);
-    console.log(numSeqEstado);
 
     const nomEstadoKey = `NOM_ESTADO_${numSeqEstado}`;
     const prazoKey = `PRAZO_${numSeqEstado}`;
@@ -257,18 +185,15 @@ function agruparObjeto(objeto, NUM_PROCES) {
     novoObjeto[fullName] = objeto.values[x].FULL_NAME;
     novoObjeto[tempoAtividade] = objeto.values[x].TEMPO_ATIVIDADE;
     novoObjeto[conclusao] = objeto.values[x].MOV_END_TIME;
-    novoObjeto[tempoGasto] = convertSecondsToHoursAndMinutes(
-      objeto.values[x].TEMPO_ATIVIDADE,
-    );
-    novoObjeto.tempoGastoProcesso = convertSecondsToHoursAndMinutes(
-      objeto.values[x].TOTAL_EXECUCAO,
-    );
+    novoObjeto[tempoGasto] = convertSecondsToHoursAndMinutes( objeto.values[x].TEMPO_ATIVIDADE);
+    novoObjeto.tempoGastoProcesso = convertSecondsToHoursAndMinutes( objeto.values[x].TOTAL_EXECUCAO);
     novoObjeto.CORSTATUS = mudaCorStatus(objeto.values[x].STATUS);
     novoObjeto.NOM_ESTADO_ATUAL = objeto.values[x].NOM_ESTADO;
 
     /** Coluna padrão */
     novoObjeto.NUM_PROCES = numProces;
     novoObjeto.DES_STATUS = objeto.values[x].DES_STATUS;
+    novoObjeto.nomeSolicitante = objeto.values[x].nomeSolicitante;
     novoObjeto.sl_destinacao_vinc = objeto.values[x].sl_destinacao_vinc;
     novoObjeto.zAtendente = objeto.values[x].zAtendente;
     novoObjeto.rb_base = objeto.values[x].rb_base;
