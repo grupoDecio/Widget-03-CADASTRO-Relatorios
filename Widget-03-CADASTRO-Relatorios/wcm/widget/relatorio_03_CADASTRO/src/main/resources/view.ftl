@@ -151,6 +151,7 @@
 									<h4>Execução das atividades</h4>
 								</div>
 							</div>
+
 							{{#NOM_ESTADO_10}}  
 							<div class="row">  
 								<div class="col-md-2">
@@ -167,23 +168,6 @@
 								</div>	
 							</div>  
 							{{/NOM_ESTADO_10}}
-
-							{{#NOM_ESTADO_29}}  
-							<div class="row">  
-								<div class="col-md-2">
-									<b>Atividade:</b> {{NOM_ESTADO_29}}
-								</div>	
-								<div class="col-md-3">
-									<b>Responsável:</b> {{FULL_NAME_29}}
-								</div>	
-								<div class="col-md-2">
-									<b>Conclusão:</b> {{MOV_END_TIME_29}}
-								</div>	
-								<div class="col-md-2">
-									<b>Tempo:</b> {{TEMPO_GASTO_29}}
-								</div>	
-							</div>  
-							{{/NOM_ESTADO_29}}
 
 							{{#NOM_ESTADO_45}}  
 							<div class="row">  
@@ -202,6 +186,23 @@
 							</div>  
 							{{/NOM_ESTADO_45}}
 
+							{{#NOM_ESTADO_36}}  
+							<div class="row">  
+								<div class="col-md-2">
+									<b>Atividade:</b> {{NOM_ESTADO_36}}
+								</div>	
+								<div class="col-md-3">
+									<b>Responsável:</b> {{FULL_NAME_36}}
+								</div>	
+								<div class="col-md-2">
+									<b>Conclusão:</b> {{MOV_END_TIME_36}}
+								</div>	
+								<div class="col-md-2">
+									<b>Tempo:</b> {{TEMPO_GASTO_36}}
+								</div>	
+							</div>  
+							{{/NOM_ESTADO_36}}
+
 							{{#NOM_ESTADO_39}}  
 							<div class="row">  
 								<div class="col-md-2">
@@ -218,6 +219,7 @@
 								</div>	
 							</div>  
 							{{/NOM_ESTADO_39}}
+
 						</div>
 						<a class="card-link" style="text-decoration: underline;" href="/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID={{NUM_PROCES}}" target="_black">Visualizar detalhes solicitação</a>
 					</div>
